@@ -1,0 +1,76 @@
+<div class="sidebar-ia" [class.mobile-open]="isOpen" [class.mobile-closed]="!isOpen">
+  <!-- Header do Sidebar -->
+  <div class="sidebar-header">
+    <div class="header-content">
+      <div class="brand">
+        <div class="brand-icon">🤖</div>
+        <span class="brand-text">MyAI Chat</span>
+      </div>
+      <button class="close-btn" (click)="toggle()" title="Fechar menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div class="sidebar-content">
+    <div class="sidebar-section">
+      <h4 class="section-title">Assistentes IA</h4>
+      <ul class="ia-list">
+        <li 
+          *ngFor="let ia of ias"
+          [class.active]="ia.id === active"
+          (click)="choose(ia.id)"
+          class="ia-item"
+        >
+          <div class="ia-content">
+            <div class="ia-avatar">
+              {{ getAvatarIcon(ia.id) }}
+            </div>
+            <div class="ia-info">
+              <span class="ia-name">{{ ia.name }}</span>
+              <span class="ia-status">{{ ia.id === active ? 'Online' : 'Offline' }}</span>
+            </div>
+            <div class="selection-indicator"></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Histórico de Conversas (Opcional) -->
+    <div class="sidebar-section" *ngIf="conversations.length > 0">
+      <h4 class="section-title">Conversas Recentes</h4>
+      <div class="conversation-list">
+        <div 
+          *ngFor="let conv of conversations"
+          class="conversation-item"
+          (click)="selectConversation(conv)"
+        >
+          <div class="conv-icon">💬</div>
+          <div class="conv-info">
+            <span class="conv-preview">{{ conv.preview }}</span>
+            <span class="conv-time">{{ conv.time }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer do Sidebar -->
+  <div class="sidebar-footer">
+    <button class="new-chat-btn" (click)="newChat()">
+      <span class="btn-icon">+</span>
+      Nova Conversa
+    </button>
+    <button class="toggle-sidebar-btn" (click)="toggle()" title="Alternar sidebar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Overlay para mobile -->
+<div class="sidebar-overlay" [class.active]="isOpen" (click)="toggle()"></div>

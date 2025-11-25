@@ -1,0 +1,27 @@
+<div class="messages-container">
+  <div class="messages">
+    <div *ngFor="let m of messages" class="msg-row" [ngClass]="m.type">
+      <div class="message-content">
+        <!-- Avatar para mensagens recebidas -->
+        <div class="avatar" *ngIf="m.type === 'received'">
+          <div class="avatar-icon">
+            {{ getAvatarIcon(m) }}
+          </div>
+        </div>
+        
+        <div class="bubble-container">
+          <div class="bubble">
+            <div class="message-text">{{ m.text }}</div>
+            <div class="message-time">{{ getMessageTime(m.timestamp) }}</div>
+          </div>
+          
+          <!-- Status de entrega para mensagens enviadas -->
+          <div class="message-status" *ngIf="m.type === 'sent'">
+            <span class="status-icon">{{ m.status === 'read' ? '👁️' : '✓' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div #end class="scroll-anchor"></div>
+  </div>
+</div>

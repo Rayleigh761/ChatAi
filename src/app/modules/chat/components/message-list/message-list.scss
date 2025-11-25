@@ -1,0 +1,279 @@
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+  
+  // Scrollbar personalizada
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--hover-light);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--text-tertiary);
+    border-radius: 3px;
+    
+    &:hover {
+      background: var(--text-secondary);
+    }
+  }
+}
+
+.msg-row {
+  display: flex;
+  animation: messageAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  transform: translateY(20px);
+  
+  @for $i from 1 through 50 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}
+
+.message-content {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 70%;
+}
+
+// Avatar
+.avatar {
+  flex-shrink: 0;
+  
+  .avatar-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    
+    &.user {
+      background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+    }
+  }
+}
+
+// Container da bolha
+.bubble-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+// Bolha de mensagem
+.bubble {
+  padding: 12px 16px;
+  border-radius: 18px;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  
+  .message-text {
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+  
+  .message-time {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 4px;
+    text-align: right;
+  }
+}
+
+// Status da mensagem
+.message-status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 0 4px;
+  
+  .status-icon {
+    font-size: 10px;
+    opacity: 0.6;
+  }
+  
+  .status-time {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    opacity: 0.7;
+  }
+}
+
+// Mensagens enviadas (usuário)
+.msg-row.sent {
+  justify-content: flex-end;
+  
+  .message-content {
+    flex-direction: row-reverse;
+  }
+  
+  .bubble {
+    background: var(--bg-message-user);
+    color: var(--text-message-user);
+    border-bottom-right-radius: 6px;
+    
+    .message-time {
+      color: rgba(255, 255, 255, 0.8);
+      display: none;
+    }
+  }
+  
+  .bubble-container {
+    align-items: flex-end;
+  }
+}
+
+// Mensagens recebidas (IA)
+.msg-row.received {
+  justify-content: flex-start;
+  
+  .bubble {
+    background: var(--bg-message-ai);
+    border: 1px solid var(--border-primary);
+    border-bottom-left-radius: 6px;
+    color: var(--text-message-ai);
+    
+    .message-time {
+      color: var(--text-tertiary);
+    }
+  }
+  
+  .bubble-container {
+    align-items: flex-start;
+  }
+  
+  .message-status {
+    display: none;
+  }
+}
+
+// Mensagens do sistema
+.msg-row.system {
+  justify-content: center;
+  
+  .message-content {
+    max-width: 100%;
+    justify-content: center;
+  }
+  
+  .bubble {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-secondary);
+    color: var(--text-tertiary);
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
+    border-radius: 12px;
+    padding: 8px 16px;
+    
+    .message-time {
+      display: none;
+    }
+  }
+  
+  .avatar,
+  .message-status {
+    display: none;
+  }
+}
+
+// Efeitos de hover
+.msg-row:not(.system):hover {
+  .bubble {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+// Animações
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scroll-anchor {
+  height: 1px;
+  opacity: 0;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .messages {
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .message-content {
+    max-width: 85%;
+    gap: 6px;
+  }
+  
+  .bubble {
+    padding: 10px 14px;
+    
+    .message-text {
+      font-size: 14px;
+    }
+  }
+  
+  .avatar .avatar-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .messages {
+    padding: 12px;
+    gap: 10px;
+  }
+  
+  .message-content {
+    max-width: 90%;
+  }
+  
+  .bubble {
+    padding: 8px 12px;
+    border-radius: 16px;
+    
+    .message-text {
+      font-size: 13px;
+    }
+  }
+  
+  .avatar .avatar-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .message-status {
+    .status-time {
+      font-size: 10px;
+    }
+  }
+}
