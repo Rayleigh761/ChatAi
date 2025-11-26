@@ -9,11 +9,10 @@ import { Component, EventEmitter, Output, Input, HostListener } from '@angular/c
 export class SidebarIa {
   @Input() ias: { id: string; name: string }[] = [];
   @Input() active: string = '';
+  @Input() isOpen: boolean = true; // RECEBE estado do pai
   @Output() select = new EventEmitter<string>();
+  @Output() toggle = new EventEmitter<void>(); // EMITE para o pai
   
-  // Estado do sidebar
-  isOpen = true;
-  isMobile = false;
   
   // Dados de exemplo para conversas
   conversations = [
@@ -22,47 +21,24 @@ export class SidebarIa {
     { id: 3, preview: 'Relatório mensal...', time: '12/12' }
   ];
 
-  ngOnInit() {
-    this.checkScreenSize();
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.checkScreenSize();
-  }
-
-  private checkScreenSize() {
-    this.isMobile = window.innerWidth <= 768;
-    if (this.isMobile) {
-      this.isOpen = false; // Fecha sidebar no mobile por padrão
-    }
-  }
-
   choose(iaId: string) {
     this.select.emit(iaId);
-    if (this.isMobile) {
-      this.toggle(); // Fecha sidebar após seleção no mobile
-    }
-  }
-
-  toggle() {
-    this.isOpen = !this.isOpen;
+    // Emite toggle para fechar no mobile (o pai decide se fecha)
+    this.toggle.emit();
   }
 
   newChat() {
     // Lógica para nova conversa
     console.log('Nova conversa iniciada');
-    if (this.isMobile) {
-      this.toggle(); // Fecha sidebar no mobile após nova conversa
-    }
+    // Emite toggle para fechar no mobile
+    this.toggle.emit();
   }
 
   selectConversation(conversation: any) {
     // Lógica para selecionar conversa
     console.log('Conversa selecionada:', conversation);
-    if (this.isMobile) {
-      this.toggle(); // Fecha sidebar no mobile
-    }
+    // Emite toggle para fechar no mobile
+    this.toggle.emit();
   }
 
   getAvatarIcon(iaId: string): string {
@@ -74,4 +50,9 @@ export class SidebarIa {
     
     return icons[iaId] || icons['default'];
   }
+
+  onToggle() {
+    this.toggle.emit();
+  }
+  
 }

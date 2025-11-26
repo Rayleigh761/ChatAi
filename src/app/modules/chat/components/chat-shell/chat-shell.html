@@ -9,6 +9,7 @@
         <app-sidebar-ia 
             [ias]="iaList" 
             [active]="activeIa" 
+            [isOpen]="sidebarOpen"
             (select)="selectIa($event)"
             (toggle)="toggleSidebar()">
         </app-sidebar-ia>

@@ -40,6 +40,9 @@ export class ChatShell implements OnInit {
     if (saved) this.messages = saved;
     this.checkScreenSize();
     this.loadThemePreference();
+    
+    // Inicializa o sidebar baseado no tamanho da tela
+    this.sidebarOpen = !this.isMobile;
   }
 
   @HostListener('window:resize')
@@ -50,9 +53,12 @@ export class ChatShell implements OnInit {
   private checkScreenSize() {
     this.isMobile = window.innerWidth <= 768;
     
-    // No desktop, sidebar começa aberto
-    if (!this.isMobile) {
-      this.sidebarOpen = false;
+    // No desktop: sidebar aberto | No mobile: sidebar fechado
+    this.sidebarOpen = !this.isMobile;
+    
+    // Garante que o scroll do body esteja liberado no mobile
+    if (this.isMobile) {
+      document.body.style.overflow = '';
     }
   }
 
@@ -125,9 +131,15 @@ export class ChatShell implements OnInit {
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
+    console.log('aqui 2')
     
     if (this.isMobile) {
       document.body.style.overflow = this.sidebarOpen ? 'hidden' : '';
+    }
+    
+    // No desktop, você pode querer salvar a preferência do usuário
+    if (!this.isMobile) {
+      this.storage.set('sidebarCollapsed', !this.sidebarOpen);
     }
   }
 

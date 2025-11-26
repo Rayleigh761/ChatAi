@@ -1,4 +1,4 @@
-<div class="sidebar-ia" [class.mobile-open]="isOpen" [class.mobile-closed]="!isOpen">
+<div class="sidebar-ia" [class.collapsed]="!isOpen">
   <!-- Header do Sidebar -->
   <div class="sidebar-header">
     <div class="header-content">
@@ -6,7 +6,7 @@
         <div class="brand-icon">🤖</div>
         <span class="brand-text">MyAI Chat</span>
       </div>
-      <button class="close-btn" (click)="toggle()" title="Fechar menu">
+      <button class="close-btn" (click)="onToggle()" title="Fechar menu">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
@@ -64,7 +64,7 @@
       <span class="btn-icon">+</span>
       Nova Conversa
     </button>
-    <button class="toggle-sidebar-btn" (click)="toggle()" title="Alternar sidebar">
+    <button class="toggle-sidebar-btn" (click)="onToggle()" title="Alternar sidebar">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
         <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
@@ -73,4 +73,4 @@
 </div>
 
 <!-- Overlay para mobile -->
-<div class="sidebar-overlay" [class.active]="isOpen" (click)="toggle()"></div>
+<div class="sidebar-overlay" [class.active]="isOpen" (click)="onToggle()"></div>

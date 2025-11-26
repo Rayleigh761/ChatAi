@@ -322,6 +322,14 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  background: var(--bg-sidebar);
+  position: relative;
+  z-index: 10;
+
+  // Garantir que o footer fique visível mesmo com scroll
+  position: sticky;
+  bottom: 0;
+  background: var(--bg-sidebar);  
 }
 
 .new-chat-btn {
@@ -339,16 +347,23 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   align-items: center;
   gap: 8px;
   overflow: hidden;
+  min-height: 44px;
   
   &:hover {
     transform: translateY(-1px);
     box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--primary-500), var(--primary-600));    
   }
   
+  &:active {
+    transform: translateY(0);
+  }
+
   .btn-icon {
     font-size: 16px;
     font-weight: 300;
     flex-shrink: 0;
+    transition: all $transition-duration $easing;    
   }
   
   span:not(.btn-icon) {
@@ -361,17 +376,28 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--hover-light);
   border: none;
   color: var(--text-tertiary);
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s $easing;
   flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   &:hover {
     background: var(--hover-dark);
     color: var(--text-inverse);
+    transform: rotate(180deg);
   }
+
+  &:active {
+    transform: scale(0.95) rotate(180deg);
+  }  
 }
+
 
 // Overlay para mobile
 .sidebar-overlay {
@@ -410,7 +436,6 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
 @media (max-width: 768px) {
   .sidebar-ia {
     position: fixed;
-    left: -100%;
     top: 0;
     width: 85%;
     max-width: 300px;
@@ -469,7 +494,7 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
 // Mobile pequeno
 @media (max-width: 480px) {
   .sidebar-ia {
-    width: 90%;
+    width: 100%;
   }
   
   .sidebar-header {
