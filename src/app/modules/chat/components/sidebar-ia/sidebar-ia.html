@@ -1,4 +1,4 @@
-<div class="sidebar-ia" [class.collapsed]="!isOpen">
+<div class="sidebar-ia" [class.collapsed]="isOpen">
   <!-- Header do Sidebar -->
   <div class="sidebar-header">
     <div class="header-content">
@@ -62,7 +62,7 @@
   <div class="sidebar-footer">
     <button class="new-chat-btn" (click)="newChat()">
       <span class="btn-icon">+</span>
-      Nova Conversa
+      <span class="btn-text">Nova Conversa</span>
     </button>
     <button class="toggle-sidebar-btn" (click)="onToggle()" title="Alternar sidebar">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">

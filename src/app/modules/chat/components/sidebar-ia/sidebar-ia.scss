@@ -1,3 +1,7 @@
+// =============================================
+// VARIÁVEIS E CONFIGURAÇÕES
+// =============================================
+
 :host {
   display: block;
   height: 100%;
@@ -8,6 +12,33 @@ $sidebar-width: 280px;
 $sidebar-width-collapsed: 70px;
 $transition-duration: 0.3s;
 $easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+// Animações
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// =============================================
+// SIDEBAR PRINCIPAL
+// =============================================
 
 .sidebar-ia {
   width: $sidebar-width;
@@ -26,6 +57,7 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   &.collapsed {
     width: $sidebar-width-collapsed;
 
+    // Esconder textos no estado collapsed
     .brand-text,
     .section-title,
     .ia-name,
@@ -67,7 +99,10 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-// Header
+// =============================================
+// HEADER DO SIDEBAR
+// =============================================
+
 .sidebar-header {
   padding: 20px 16px 16px;
   border-bottom: 1px solid var(--border-primary);
@@ -118,7 +153,10 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-// Conteúdo principal
+// =============================================
+// CONTEÚDO PRINCIPAL
+// =============================================
+
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
@@ -157,7 +195,10 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   transition: all $transition-duration $easing;
 }
 
-// Lista de IAs
+// =============================================
+// LISTA DE ASSISTENTES IA
+// =============================================
+
 .ia-list {
   list-style: none;
   padding: 0;
@@ -169,7 +210,17 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   transition: all 0.3s $easing;
   border-left: 3px solid transparent;
+  animation: slideIn 0.3s ease forwards;
+  opacity: 0;
   
+  // Animação escalonada
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+  
+  // Hover
   &:hover {
     background: var(--hover-light);
     
@@ -182,6 +233,7 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
     }
   }
   
+  // Estado ativo
   &.active {
     background: rgba(99, 102, 241, 0.15);
     border-left-color: var(--primary-500);
@@ -265,7 +317,10 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
 }
 
-// Lista de conversas
+// =============================================
+// LISTA DE CONVERSAS
+// =============================================
+
 .conversation-list {
   display: flex;
   flex-direction: column;
@@ -314,7 +369,10 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-// Footer
+// =============================================
+// FOOTER DO SIDEBAR
+// =============================================
+
 .sidebar-footer {
   padding: 16px;
   border-top: 1px solid var(--border-primary);
@@ -322,84 +380,133 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
-  background: var(--bg-sidebar);
-  position: relative;
-  z-index: 10;
-
-  // Garantir que o footer fique visível mesmo com scroll
   position: sticky;
   bottom: 0;
-  background: var(--bg-sidebar);  
+  z-index: 20;
+  backdrop-filter: blur(10px);
+  background: rgba(var(--bg-sidebar-rgb), 0.95);
+  animation: fadeInUp 0.4s ease-out;
 }
 
 .new-chat-btn {
   flex: 1;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  padding: 14px 16px;
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
   color: var(--text-inverse);
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.3s $easing;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   overflow: hidden;
-  min-height: 44px;
+  min-height: 48px;
+  position: relative;
   
+  // Efeito de brilho no hover
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  // Estados interativos
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-lg);
-    background: linear-gradient(135deg, var(--primary-500), var(--primary-600));    
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(var(--primary-500-rgb), 0.3);
+    background: linear-gradient(135deg, var(--primary-400), var(--primary-500));
+    
+    &::before {
+      left: 100%;
+    }
+    
+    .btn-icon {
+      transform: scale(1.1) rotate(90deg);
+    }   
   }
   
   &:active {
     transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(var(--primary-500-rgb), 0.2);
+  }
+
+  // Estados especiais
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+    
+    &:hover {
+      transform: none !important;
+      box-shadow: none !important;
+    }
   }
 
   .btn-icon {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 300;
     flex-shrink: 0;
-    transition: all $transition-duration $easing;    
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
   }
   
   span:not(.btn-icon) {
     transition: all $transition-duration $easing;
     white-space: nowrap;
+    font-weight: 500;
   }
 }
 
 .toggle-sidebar-btn {
-  background: var(--hover-light);
-  border: none;
-  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  color: var(--text-secondary);
   padding: 12px;
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s $easing;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 48px;
+  min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   
+  // Estados interativos
   &:hover {
-    background: var(--hover-dark);
-    color: var(--text-inverse);
+    background: var(--hover-light);
+    border-color: var(--primary-300);
+    color: var(--primary-500);
     transform: rotate(180deg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   &:active {
     transform: scale(0.95) rotate(180deg);
-  }  
+  }
+  
+  svg {
+    transition: transform 0.3s ease;
+  }
 }
 
+// =============================================
+// OVERLAY PARA MOBILE
+// =============================================
 
-// Overlay para mobile
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -419,9 +526,61 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-// ========== RESPONSIVIDADE ==========
+// =============================================
+// ESTADO COLLAPSED
+// =============================================
 
-// Tablet
+.sidebar-ia.collapsed {
+  .sidebar-footer {
+    padding: 10px 8px;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .new-chat-btn {
+    padding: 12px;
+    border-radius: 10px;
+    min-height: 44px;
+    width: 44px;
+    justify-content: center;
+    
+    .btn-icon {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .btn-text {
+      display: none;
+    }
+    
+    span:not(.btn-icon) {
+      opacity: 0;
+      width: 0;
+      margin: 0;
+    }
+  }
+  
+  .toggle-sidebar-btn {
+    padding: 10px;
+    min-width: 44px;
+    min-height: 44px;
+    transform: rotate(180deg);
+    
+    &:hover {
+      transform: rotate(0deg);
+    }
+    
+    &:active {
+      transform: scale(0.95) rotate(0deg);
+    }
+  }
+}
+
+// =============================================
+// RESPONSIVIDADE
+// =============================================
+
+// Tablet (1024px ou menos)
 @media (max-width: 1024px) {
   .sidebar-ia {
     width: 240px;
@@ -430,9 +589,14 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
       width: $sidebar-width-collapsed;
     }
   }
+  
+  .sidebar-footer {
+    padding: 14px 16px;
+    gap: 10px;
+  }
 }
 
-// Mobile
+// Mobile (768px ou menos)
 @media (max-width: 768px) {
   .sidebar-ia {
     position: fixed;
@@ -440,11 +604,15 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
     width: 85%;
     max-width: 300px;
     transition: left $transition-duration $easing;
+    height: 100%;
+    overflow-y: auto;
     
+    // Mobile aberto
     &.mobile-open {
       left: 0;
     }
     
+    // Reset do collapsed no mobile
     &.collapsed {
       width: 85%;
       max-width: 300px;
@@ -476,80 +644,8 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
         justify-content: flex-start;
       }
     }
-  }
-  
-  .close-btn {
-    display: flex;
-  }
-  
-  .toggle-sidebar-btn {
-    display: none;
-  }
-  
-  .sidebar-overlay {
-    display: block;
-  }
-}
-
-// Mobile pequeno
-@media (max-width: 480px) {
-  .sidebar-ia {
-    width: 100%;
-  }
-  
-  .sidebar-header {
-    padding: 16px 12px 12px;
-  }
-  
-  .sidebar-content {
-    padding: 12px 0;
-  }
-  
-  .ia-content {
-    padding: 10px 6px;
-    gap: 10px;
-  }
-  
-  .ia-avatar {
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
-  }
-  
-  .sidebar-footer {
-    padding: 12px;
-  }
-}
-
-// Animações
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.ia-item {
-  animation: slideIn 0.3s ease forwards;
-  opacity: 0;
-  
-  @for $i from 1 through 10 {
-    &:nth-child(#{$i}) {
-      animation-delay: #{$i * 0.05}s;
-    }
-  }
-}
-
-// Mobile
-@media (max-width: 768px) {
-  .sidebar-ia {
-    height: 100%;
-    overflow-y: auto;
     
+    // Ajustes específicos do mobile
     .sidebar-header {
       padding: 16px 20px;
       position: sticky;
@@ -571,19 +667,48 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
       }
     }
   }
+  
+  // Elementos específicos do mobile
+  .close-btn {
+    display: flex;
+  }
+  
+  .toggle-sidebar-btn {
+    display: none;
+  }
+  
+  .sidebar-overlay {
+    display: block;
+  }
+  
+  .sidebar-footer {
+    padding: 12px 16px;
+    gap: 8px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  
+  .new-chat-btn,
+  .toggle-sidebar-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
-// Mobile pequeno
+// Mobile Pequeno (480px ou menos)
 @media (max-width: 480px) {
   .sidebar-ia {
+    width: 100%;
+    
     .sidebar-header {
       padding: 14px 16px;
     }
     
-    .brand {
-      .brand-text {
-        font-size: 16px;
-      }
+    .brand .brand-text {
+      font-size: 16px;
+    }
+    
+    .sidebar-content {
+      padding: 12px 0;
     }
     
     .ia-content {
@@ -605,6 +730,10 @@ $easing: cubic-bezier(0.4, 0, 0.2, 1);
       .ia-status {
         font-size: 10px;
       }
+    }
+    
+    .sidebar-footer {
+      padding: 12px;
     }
   }
 }

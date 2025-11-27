@@ -62,4 +62,52 @@ export class MessageList implements AfterViewChecked{
     
     return 'Agora';
   }
+
+  // Método para copiar texto para a área de transferência
+  async copyToClipboard(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      this.showCopyFeedback();
+    } catch (err) {
+      // Fallback para navegadores mais antigos
+      this.fallbackCopyToClipboard(text);
+    }
+  }
+
+  // Método fallback para copiar
+  private fallbackCopyToClipboard(text: string) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+      document.execCommand('copy');
+      this.showCopyFeedback();
+    } catch (err) {
+      console.error('Fallback: Oops, unable to copy', err);
+    }
+    
+    document.body.removeChild(textArea);
+  }
+
+  // Mostrar feedback visual de cópia
+  private showCopyFeedback() {
+    // Você pode implementar um toast notification aqui
+    console.log('Texto copiado para a área de transferência!');
+    
+    // Feedback visual temporário nos botões
+    const buttons = document.querySelectorAll('.copy-btn');
+    buttons.forEach(btn => {
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.classList.remove('copied');
+      }, 1000);
+    });
+  }
+  
 }

@@ -15,20 +15,23 @@ export class ChatService {
   constructor(private api: ApiService) {}
 
   sendMessage(text: string, sessionId?: string): Observable<Message> {
+    
     const payload = {
       sessionId: sessionId || uuidv4(),
-      text,
+      idUsuario: 12,
+      idEmpresa: 853116,
+      message: text,
       timestamp: new Date().toISOString()
     };
+
     // envia para o webhook (n8n). Espera-se que o fluxo do n8n responda
     return this.api.post<any>(this.webhookUrl, payload).pipe(
     map(response => {
-      const replyText = response?.output ?? 'Sem resposta do webhook';
+      const replyText = response?.output ?? 'Sem resposta';
       const msg: Message = {
         id: uuidv4(),
         text: replyText,
         type: 'received',
-        status: 'received',
         timestamp: new Date().toISOString()
       };
       return msg;
@@ -38,8 +41,7 @@ export class ChatService {
       const errMsg: Message = {
         id: uuidv4(),
         text: 'Erro ao contatar o servidor.',
-        type: 'system',
-        status: 'read',  
+        type: 'received',
         timestamp: new Date().toISOString()
       };
       return of(errMsg);

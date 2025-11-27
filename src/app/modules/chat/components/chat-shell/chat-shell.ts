@@ -27,6 +27,11 @@ export class ChatShell implements OnInit {
   // Controle do tema
   isDarkMode = false;
 
+  // Controle do estado de digitação
+  isTyping = false;
+  typingTimeout: any;
+
+
   constructor(
     private chatService: ChatService,
     private storage: StorageService
@@ -109,18 +114,79 @@ export class ChatShell implements OnInit {
       id: uuidv4(),
       text,
       type: 'sent',
-      status: 'read',
       timestamp: new Date().toISOString(),
     };
 
     this.messages.push(out);
     this.storage.set('chatHistory', this.messages);
 
-    this.chatService.sendMessage(text, this.sessionId).subscribe(reply => {
-      this.messages.push(reply);
-      this.storage.set('chatHistory', this.messages);
+    // Mostra indicador de digitando
+    this.showTypingIndicator();
+
+    this.chatService.sendMessage(text, this.sessionId).subscribe({
+      next: (reply) => {
+        // Remove o indicador de digitando
+        this.hideTypingIndicator();
+        
+        // Adiciona a resposta
+        this.messages.push(reply);
+        this.storage.set('chatHistory', this.messages);
+      },
+      error: (error) => {
+        // Remove o indicador em caso de erro
+        this.hideTypingIndicator();
+        
+        // Adiciona mensagem de erro
+        const errorMessage: Message = {
+          id: uuidv4(),
+          text: 'Desculpe, ocorreu um erro. Tente novamente.',
+          type: 'received',
+          timestamp: new Date().toISOString(),
+          sender: 'system'
+        };
+        this.messages.push(errorMessage);
+        this.storage.set('chatHistory', this.messages);
+        
+        console.error('Erro ao enviar mensagem:', error);
+      }
     });
   }
+
+  // Método para mostrar indicador de digitando
+  private showTypingIndicator() {
+    // Remove qualquer indicador existente
+    this.hideTypingIndicator();
+    
+    // Adiciona novo indicador
+    const typingMessage: Message = {
+      id: 'typing-indicator',
+      text: '',
+      type: 'typing',
+      timestamp: new Date().toISOString(),
+      sender: this.activeIa
+    };
+    
+    this.messages.push(typingMessage);
+    this.isTyping = true;
+  }
+
+  // Método para remover indicador de digitando
+  private hideTypingIndicator() {
+    this.messages = this.messages.filter(msg => msg.id !== 'typing-indicator');
+    this.isTyping = false;
+    
+    if (this.typingTimeout) {
+      clearTimeout(this.typingTimeout);
+    }
+  }
+
+  // Simula tempo de digitação (opcional)
+  private simulateTyping(duration: number = 2000) {
+    this.typingTimeout = setTimeout(() => {
+      this.hideTypingIndicator();
+    }, duration);
+  }
+
 
   selectIa(id: string) {
     this.activeIa = id;
@@ -131,7 +197,6 @@ export class ChatShell implements OnInit {
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
-    console.log('aqui 2')
     
     if (this.isMobile) {
       document.body.style.overflow = this.sidebarOpen ? 'hidden' : '';

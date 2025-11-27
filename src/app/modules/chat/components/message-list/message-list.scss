@@ -1,3 +1,68 @@
+// =============================================
+// VARIÁVEIS E MIXINS
+// =============================================
+
+// Animations
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes typing-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// =============================================
+// CONTAINER PRINCIPAL
+// =============================================
+
+.messages-container {
+  height: 100%;
+  overflow: hidden;
+}
+
 .messages {
   display: flex;
   flex-direction: column;
@@ -26,18 +91,40 @@
   }
 }
 
+.scroll-anchor {
+  height: 1px;
+  opacity: 0;
+}
+
+// =============================================
+// LINHAS DE MENSAGEM
+// =============================================
+
 .msg-row {
   display: flex;
   animation: messageAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
   transform: translateY(20px);
   
+  // Animação escalonada para mensagens
   @for $i from 1 through 50 {
     &:nth-child(#{$i}) {
       animation-delay: #{$i * 0.05}s;
     }
   }
+  
+  // Efeitos de hover
+  &:not(.system):hover {
+    .bubble {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+  }
 }
+
+// =============================================
+// LAYOUT DAS MENSAGENS
+// =============================================
 
 .message-content {
   display: flex;
@@ -46,7 +133,46 @@
   max-width: 70%;
 }
 
-// Avatar
+// Mensagens enviadas (usuário) - ALINHADO À DIREITA
+.msg-row.sent {
+  justify-content: flex-end;
+  
+  .message-content {
+    flex-direction: row-reverse;
+  }
+  
+  .bubble-container {
+    align-items: flex-end;
+  }
+}
+
+// Mensagens recebidas (IA) - ALINHADO À ESQUERDA
+.msg-row.received {
+  justify-content: flex-start;
+  
+  .bubble-container {
+    align-items: flex-start;
+  }
+}
+
+// Mensagens do sistema - CENTRALIZADO
+.msg-row.system {
+  justify-content: center;
+  
+  .message-content {
+    max-width: 100%;
+    justify-content: center;
+  }
+  
+  .avatar {
+    display: none;
+  }
+}
+
+// =============================================
+// AVATAR
+// =============================================
+
 .avatar {
   flex-shrink: 0;
   
@@ -67,18 +193,22 @@
   }
 }
 
-// Container da bolha
+// =============================================
+// BOLHAS DE MENSAGEM
+// =============================================
+
 .bubble-container {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-// Bolha de mensagem
 .bubble {
+  max-width: 70%;
   padding: 12px 16px;
   border-radius: 18px;
   position: relative;
+  word-wrap: break-word;
   transition: all 0.2s ease;
   box-shadow: var(--shadow-sm);
   
@@ -87,140 +217,201 @@
     line-height: 1.4;
     word-wrap: break-word;
     white-space: pre-wrap;
+    margin-bottom: 4px;
   }
   
   .message-time {
     font-size: 11px;
     opacity: 0.7;
     margin-top: 4px;
-    text-align: right;
-  }
-}
-
-// Status da mensagem
-.message-status {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-  padding: 0 4px;
-  
-  .status-icon {
-    font-size: 10px;
-    opacity: 0.6;
-  }
-  
-  .status-time {
-    font-size: 11px;
-    color: var(--text-tertiary);
-    opacity: 0.7;
-  }
-}
-
-// Mensagens enviadas (usuário)
-.msg-row.sent {
-  justify-content: flex-end;
-  
-  .message-content {
-    flex-direction: row-reverse;
-  }
-  
-  .bubble {
-    background: var(--bg-message-user);
-    color: var(--text-message-user);
-    border-bottom-right-radius: 6px;
-    
-    .message-time {
-      color: rgba(255, 255, 255, 0.8);
-      display: none;
-    }
-  }
-  
-  .bubble-container {
-    align-items: flex-end;
   }
 }
 
 // Mensagens recebidas (IA)
-.msg-row.received {
-  justify-content: flex-start;
+.msg-row.received .bubble {
+  background: var(--bg-message-ai);
+  border: 1px solid var(--border-primary);
+  border-bottom-left-radius: 6px;
+  color: var(--text-message-ai);
   
-  .bubble {
-    background: var(--bg-message-ai);
-    border: 1px solid var(--border-primary);
-    border-bottom-left-radius: 6px;
-    color: var(--text-message-ai);
-    
-    .message-time {
-      color: var(--text-tertiary);
-    }
+  .message-time {
+    color: var(--text-tertiary);
+    text-align: left;
   }
+}
+
+// Mensagens enviadas (usuário)
+.msg-row.sent .bubble {
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  color: white;
+  border-bottom-right-radius: 6px;
   
-  .bubble-container {
-    align-items: flex-start;
-  }
-  
-  .message-status {
-    display: none;
+  .message-time {
+    color: rgba(255, 255, 255, 0.8);
+    text-align: right;
+    display: none; // Ocultar tempo nas mensagens enviadas se preferir
   }
 }
 
 // Mensagens do sistema
-.msg-row.system {
-  justify-content: center;
+.msg-row.system .bubble {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+  border-radius: 12px;
+  padding: 8px 16px;
   
-  .message-content {
-    max-width: 100%;
-    justify-content: center;
-  }
-  
-  .bubble {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-secondary);
-    color: var(--text-tertiary);
-    font-size: 12px;
-    font-style: italic;
-    text-align: center;
-    border-radius: 12px;
-    padding: 8px 16px;
-    
-    .message-time {
-      display: none;
-    }
-  }
-  
-  .avatar,
-  .message-status {
+  .message-time {
     display: none;
   }
 }
 
-// Efeitos de hover
-.msg-row:not(.system):hover {
-  .bubble {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
+// =============================================
+// INDICADOR DE DIGITANDO
+// =============================================
+
+.typing-bubble {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-primary) !important;
+  
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-bottom: 4px;
+    
+    span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-tertiary);
+      animation: typing-bounce 1.4s infinite ease-in-out;
+      
+      &:nth-child(1) { animation-delay: -0.32s; }
+      &:nth-child(2) { animation-delay: -0.16s; }
+      &:nth-child(3) { animation-delay: 0s; }
+    }
+  }
+  
+  .message-time {
+    color: var(--text-tertiary);
+    font-style: italic;
+    font-size: 11px;
   }
 }
 
-// Animações
-@keyframes messageAppear {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+// =============================================
+// BOTÃO DE COPIAR
+// =============================================
+
+.message-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  gap: 8px;
 }
 
-.scroll-anchor {
-  height: 1px;
+.copy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0;
+  flex-shrink: 0;
+  position: relative;
+  
+  &:hover {
+    background: var(--hover-light);
+    color: var(--primary-500);
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  // Ícones
+  .copy-icon {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.3s ease;
+  }
+  
+  .check-icon {
+    position: absolute;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+    color: var(--success);
+  }
+  
+  // Estado copiado
+  &.copied {
+    background: var(--success-light);
+    color: var(--success);
+    
+    .copy-icon {
+      opacity: 0;
+      transform: scale(0);
+    }
+    
+    .check-icon {
+      opacity: 1;
+      transform: scale(1);
+      animation: checkmark 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    // Animação de pulso para feedback
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 10px;
+      background: var(--success);
+      opacity: 0.2;
+      animation: pulse 0.6s ease;
+    }
+  }
 }
 
-// Responsive
+// Mostrar botão de copiar no hover
+.msg-row:hover .copy-btn {
+  opacity: 1;
+}
+
+// Estilos específicos para mensagens enviadas
+.sent .copy-btn {
+  color: rgba(255, 255, 255, 0.7);
+  
+  &:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  &.copied {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--success-light);
+  }
+}
+
+// =============================================
+// RESPONSIVIDADE
+// =============================================
+
 @media (max-width: 768px) {
   .messages {
     padding: 16px;
@@ -244,6 +435,13 @@
     width: 28px;
     height: 28px;
     font-size: 12px;
+  }
+  
+  // Mobile: sempre mostrar botão de copiar
+  .copy-btn {
+    opacity: 1 !important;
+    width: 28px;
+    height: 28px;
   }
 }
 
@@ -269,11 +467,5 @@
   .avatar .avatar-icon {
     width: 24px;
     height: 24px;
-  }
-  
-  .message-status {
-    .status-time {
-      font-size: 10px;
-    }
   }
 }

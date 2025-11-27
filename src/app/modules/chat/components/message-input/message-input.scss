@@ -1,8 +1,24 @@
+// =============================================
+// VARIÁVEIS E CONFIGURAÇÕES
+// =============================================
+
+// Transições
+$input-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$button-transition: all 0.2s ease;
+
+// =============================================
+// CONTAINER PRINCIPAL
+// =============================================
+
 .message-input-container {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
+
+// =============================================
+// WRAPPER DO INPUT
+// =============================================
 
 .input-wrapper {
   display: flex;
@@ -13,14 +29,19 @@
   border: 1px solid var(--border-primary);
   border-radius: 20px;
   box-shadow: var(--shadow-md);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: $input-transition;
   
+  // Estado de foco
   &:focus-within {
     border-color: var(--border-accent);
     box-shadow: var(--shadow-lg);
     transform: translateY(-2px);
   }
 }
+
+// =============================================
+// ÁREA DE CONTEÚDO DO INPUT
+// =============================================
 
 .input-content {
   flex: 1;
@@ -32,8 +53,8 @@
 
 .input-content input {
   flex: 1;
-  min-height: 48px;
-  padding: 12px 16px;
+  min-height: 30px;
+  padding: 10px;
   border: none;
   background: transparent;
   outline: none;
@@ -43,6 +64,7 @@
   resize: none;
   font-family: inherit;
   
+  // Placeholder
   &::placeholder {
     color: var(--text-tertiary);
     opacity: 1;
@@ -54,12 +76,17 @@
   }
 }
 
+// =============================================
+// AÇÕES E BOTÕES
+// =============================================
+
 .input-actions {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
+// Botão de Anexar
 .attach-btn {
   display: flex;
   align-items: center;
@@ -71,8 +98,9 @@
   color: var(--text-tertiary);
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: $button-transition;
   
+  // Hover
   &:hover {
     background: var(--hover-light);
     color: var(--primary-500);
@@ -80,31 +108,42 @@
   }
 }
 
+// Botão de Enviar
 .send-btn {
+  background: var(--primary-500);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border: none;
-  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-  color: var(--text-inverse);
-  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-md);
+  color: white;
+  transition: $input-transition;
+  flex-shrink: 0;
   
-  &:hover:not(.disabled) {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+  // Estados interativos
+  &:hover:not(:disabled) {
+    background: var(--primary-600);
+    transform: scale(1.05);
   }
   
-  &.disabled {
-    background: linear-gradient(135deg, var(--neutral-400), var(--neutral-500));
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+  
+  // Estado desabilitado
+  &:disabled {
+    background: var(--text-tertiary);
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.5;
   }
 }
+
+// =============================================
+// FOOTER E TEXTO DE AJUDA
+// =============================================
 
 .input-footer {
   display: flex;
@@ -119,7 +158,11 @@
   transition: color 0.2s ease;
 }
 
-// Responsive
+// =============================================
+// RESPONSIVIDADE
+// =============================================
+
+// Tablet (768px ou menos)
 @media (max-width: 768px) {
   .input-wrapper {
     padding: 12px;
@@ -133,18 +176,13 @@
     font-size: 16px;
   }
   
-  .send-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-  }
-  
   .attach-btn {
     width: 36px;
     height: 36px;
   }
 }
 
+// Mobile Pequeno (480px ou menos)
 @media (max-width: 480px) {
   .input-wrapper {
     padding: 10px;
@@ -161,12 +199,6 @@
     font-size: 15px;
   }
   
-  .send-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-  }
-  
   .attach-btn {
     width: 32px;
     height: 32px;
@@ -174,5 +206,64 @@
   
   .hint-text {
     font-size: 11px;
+  }
+}
+
+// =============================================
+// ESTADOS ESPECIAIS (OPCIONAIS)
+// =============================================
+
+// Estado de loading
+.input-wrapper.loading {
+  .send-btn {
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: loadingShine 1.5s infinite;
+    }
+  }
+}
+
+// Estado de erro
+.input-wrapper.error {
+  border-color: var(--error);
+  
+  &:focus-within {
+    border-color: var(--error);
+    box-shadow: 0 0 0 2px rgba(var(--error-rgb), 0.1);
+  }
+}
+
+// Animações
+@keyframes loadingShine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// Tema escuro
+:host-context(.dark-theme) {
+  .input-wrapper {
+    background: var(--bg-secondary);
+    border-color: var(--border-primary);
+  }
+  
+  .input-content input {
+    color: var(--text-primary);
+    
+    &::placeholder {
+      color: var(--text-tertiary);
+    }
   }
 }
